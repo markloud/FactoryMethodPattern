@@ -16,7 +16,7 @@ namespace Factory
     {
         public void Drive(int miles)
         {
-            Console.WriteLine("Drive the Scooter : " + miles.ToString() + "km");
+            Console.WriteLine("Drive the Scooter : " + miles.ToString() + "miles");
         }
     }
 
@@ -27,7 +27,22 @@ namespace Factory
     {
         public void Drive(int miles)
         {
-            Console.WriteLine("Drive the Bike : " + miles.ToString() + "km");
+            Console.WriteLine("Drive the Bike : " + miles.ToString() + "miles");
+        }
+    }
+
+    public class Driver
+    {
+        public string Name { get; set; }
+
+        public IFactory DriverVehicle { get; set; }
+    }
+
+    public class Car : IFactory
+    {
+        public void Drive(int miles)
+        {
+            Console.WriteLine("Drive the car: {0}miles", miles);
         }
     }
 
@@ -53,6 +68,8 @@ namespace Factory
                     return new Scooter();
                 case "Bike":
                     return new Bike();
+                case "Car":
+                    return new Car();
                 default:
                     throw new ApplicationException(string.Format("Vehicle '{0}' cannot be created", Vehicle));
             }
@@ -68,14 +85,28 @@ namespace Factory
         static void Main(string[] args)
         {
             VehicleFactory factory = new ConcreteVehicleFactory();
+            Driver mark = new Driver
+            {
+                Name = "mark",
+                DriverVehicle = factory.GetVehicle("Car")
+            };
 
-            IFactory scooter = factory.GetVehicle("Scooter");
-            scooter.Drive(10);
+            mark.DriverVehicle.Drive(2);
 
-            IFactory bike = factory.GetVehicle("Bike    ");
-            bike.Drive(20);
+            while(true)
+            {
+                Console.Write("What do you want to drive next? ");
+                mark.DriverVehicle = factory.GetVehicle(Console.ReadLine());
+                mark.DriverVehicle.Drive(4);
+            }
 
-            Console.ReadKey();
+
+            //IFactory scooter = factory.GetVehicle("Scooter");
+            //scooter.Drive(10);
+
+            //IFactory bike = factory.GetVehicle("Bike");
+            //bike.Drive(20);
+            
 
         }
     }
